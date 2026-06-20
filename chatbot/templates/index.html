@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Support Bot</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+        }
+
+        .chat-container{
+            width:400px;
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0px 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .chat-header{
+            background:#4a69bd;
+            color:white;
+            padding:15px;
+            text-align:center;
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .chat-box{
+            height:400px;
+            padding:15px;
+            overflow-y:auto;
+            background:#f5f6fa;
+        }
+
+        .message{
+            margin:10px 0;
+            padding:10px 15px;
+            border-radius:15px;
+            max-width:75%;
+            word-wrap:break-word;
+        }
+
+        .user{
+            background:#4a69bd;
+            color:white;
+            margin-left:auto;
+            text-align:right;
+        }
+
+        .bot{
+            background:#dcdde1;
+            color:black;
+            margin-right:auto;
+        }
+
+        .input-area{
+            display:flex;
+            padding:10px;
+            background:white;
+            border-top:1px solid #ccc;
+        }
+
+        .input-area input{
+            flex:1;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:10px;
+            outline:none;
+            font-size:14px;
+        }
+
+        .input-area button{
+            margin-left:10px;
+            padding:12px 20px;
+            border:none;
+            border-radius:10px;
+            background:#4a69bd;
+            color:white;
+            cursor:pointer;
+            font-size:14px;
+            transition:0.3s;
+        }
+
+        .input-area button:hover{
+            background:#1e3799;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+            Smart Support Bot
+        </div>
+
+        <div class="chat-box" id="chat-box">
+
+            <div class="message bot">
+                Hello 👋<br>
+                How can I help you today?
+            </div>
+
+        </div>
+
+        <div class="input-area">
+
+            <input type="text" id="user-input" placeholder="Type your message...">
+
+            <button onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+<script>
+
+function sendMessage(){
+
+    let userInput = document.getElementById("user-input");
+
+    let message = userInput.value.trim();
+
+    if(message === ""){
+        return;
+    }
+
+    let chatBox = document.getElementById("chat-box");
+
+    // User Message
+    let userMessage = document.createElement("div");
+
+    userMessage.className = "message user";
+
+    userMessage.innerText = message;
+
+    chatBox.appendChild(userMessage);
+
+    // Send request to backend
+    fetch("/chatbot/get_response/", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            message:message
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        let botMessage = document.createElement("div");
+
+        botMessage.className = "message bot";
+
+        botMessage.innerHTML = data.response;
+
+        chatBox.appendChild(botMessage);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    });
+
+    userInput.value = "";
+
+}
+
+
+// Enter Key Support
+document.getElementById("user-input")
+.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        sendMessage();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
