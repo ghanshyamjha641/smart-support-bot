@@ -49,7 +49,7 @@ def get_response(request):
             if any(word in tokens for word in greeting_words):
 
                 response = """
-                <b>Welcome to Chandigarh University Smart Support Bot 🎓</b><br><br>
+                <b>Welcome to Smart Support Bot 🎓</b><br><br>
 
                 I can help you with:<br><br>
 
